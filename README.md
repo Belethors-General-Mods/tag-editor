@@ -9,16 +9,16 @@ Current Roadmap
 
 - [ ] Tag-editor
   - [ ] list tags
-	- [ ] add
+  - [ ] add
     - [ ] auto-sort
   - [ ] delete
   - [ ] sort
-	- [ ] edit
+  - [ ] edit
     - [ ] print details
     - [ ] id
     - [ ] name
     - [ ] gems
-		- [ ] nexus
-		- [ ] steam
-		- [ ] bethesda
+    - [ ] nexus
+    - [ ] steam
+    - [ ] bethesda
   - [ ] list unused IDs
