@@ -8,10 +8,10 @@ Current Roadmap
 ---------------
 
 - [ ] Tag-editor
-  - [ ] list tags
+  - [x] list tags
   - [ ] add
     - [ ] auto-sort
-  - [ ] delete
+  - [x] delete
   - [ ] sort
   - [ ] edit
     - [ ] print details
