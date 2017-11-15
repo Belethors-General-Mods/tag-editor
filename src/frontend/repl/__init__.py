@@ -6,7 +6,7 @@ from cmd import Cmd
 
 from copy import copy
 
-from typing import List, Union
+from typing import List, Optional
 
 import lib.color as color
 
@@ -53,8 +53,8 @@ class REPL(Cmd):
         super(REPL, self).__init__()
         self.config = config
         self.path = config['tag_db_path']
-        self.database: Union[None, dict] = None
-        self.__orig_database: Union[None, dict] = {}
+        self.database: Optional[dict] = None
+        self.__orig_database: Optional[dict] = {}
         self.mapping: dict = {}
         self.changed = False
 
@@ -65,12 +65,13 @@ class REPL(Cmd):
     path = os.getcwd()
     prompt = color.colorize(color.FGGREEN, '$ ')
 
-    def default(self, line: str):
+    def default(self, line: str) -> bool:
         """Override error output to fit with zenlog."""
         if line == 'EOF':
             print()
             return self.do_exit(line)
         log.e(f'Unknown command `{line}`')
+        return False
 
     def update_database(self) -> None:
         """Update the database."""
@@ -82,6 +83,9 @@ class REPL(Cmd):
     def update_mapping(self) -> None:
         """Update the mapping."""
         log.d('building id mapping')
+        if self.database is None:
+            log.e('The database is not loaded!')
+            return
         self.mapping = tag.get_id_map(self.database)
 
     def preloop(self) -> None:
@@ -89,7 +93,7 @@ class REPL(Cmd):
         log.d('preloop')
         self.update_database()
 
-    def postcmd(self, stop: Union[None, bool], line: str) -> bool:
+    def postcmd(self, stop: Optional[bool], line: str) -> bool:
         """Update internal state after each command."""
         self.changed = self.database == self.__orig_database
         return bool(stop)
@@ -124,6 +128,7 @@ class REPL(Cmd):
             return True
         else:
             log.i('Canceled.')
+        return False
 
     def do_load(self, _: str) -> None:
         """Load the tag database into memory."""
@@ -257,6 +262,9 @@ class REPL(Cmd):
 
     def do_save(self, _: str) -> None:
         """Save changes to the database."""
+        if self.database is None:
+            log.e('The database is not loaded!')
+            return
         tag.save_tagdb(self.path, self.database)
         self.__orig_database = copy(self.database)
         self.update_mapping()
