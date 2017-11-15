@@ -1,0 +1,62 @@
+"""Simple colorizing library."""
+
+
+# ANSI format codes; most work in bash
+
+RESET = "\033[0m"
+BOLD = "\033[1m"
+DIM = "\033[2m"
+UNDERLINE = "\033[4m"
+BLINK = "\033[5m"
+INVERT = "\033[7m"
+HIDE = "\033[8m"
+
+UNBOLD = "\033[21m"
+UNDIM = "\033[22m"
+UNUNDERLINE = "\033[24m"
+UNBLINK = "\033[25m"
+UNINVERT = "\033[27m"
+UNHIDE = "\033[28m"
+
+FGBLACK = "\033[30m"
+FGRED = "\033[31m"
+FGGREEN = "\033[32m"
+FGYELLOW = "\033[33m"
+FGBLUE = "\033[34m"
+FGMAGENTA = "\033[35m"
+FGCYAN = "\033[36m"
+FGLIGHTGRAY = "\033[37m"
+FGDEFAULT = "\033[39m"
+
+BGBLACK = "\033[40m"
+BGRED = "\033[41m"
+BGGREEN = "\033[42m"
+BGYELLOW = "\033[43m"
+BGBLUE = "\033[44m"
+BGMAGENTA = "\033[45m"
+BGCYAN = "\033[46m"
+BGLIGHTGRAY = "\033[47m"
+BGDEFAULT = "\033[49m"
+
+FGDARKGRAY = "\033[90m"
+FGLIGHTRED = "\033[91m"
+FGLIGHTGREEN = "\033[92m"
+FGLIGHTYELLOW = "\033[93m"
+FGLIGHTBLUE = "\033[94m"
+FGLIGHTMAGENTA = "\033[95m"
+FGLIGHTCYAN = "\033[96m"
+FGWHITE = "\033[97m"
+
+BGDARKGRAY = "\033[100m"
+BGLIGHTRED = "\033[101m"
+BGLIGHTGREEN = "\033[102m"
+BGLIGHTYELLOW = "\033[103m"
+BGLIGHTBLUE = "\033[104m"
+BGLIGHTMAGENTA = "\033[105m"
+BGLIGHTCYAN = "\033[106m"
+BGWHITE = "\033[107m"
+
+
+def colorize(code: str, message: str) -> str:
+    """Prepend an ANSI color code and append the reset code."""
+    return f'{code}{message}{RESET}'
