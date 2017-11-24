@@ -52,7 +52,7 @@ def load_tagdb(path: str) -> dict:
 
 def save_tagdb(path: str, tagdb: dict) -> None:
     """Save the tag database to disk."""
-    # TODO: test and review database saving
+    # TODO: test and merge database saving
     
     atbs = ["beth", "gems", "nexus", "steam"]
     natbs = ["category", "tag"]
