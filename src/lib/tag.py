@@ -53,7 +53,7 @@ def load_tagdb(path: str) -> dict:
 def save_tagdb(path: str, tagdb: dict) -> None:
     """Save the tag database to disk."""
     # TODO: test and review database saving
-    #opf = open(path, "w")
+    opf = open(path, "w")
     
     atbs = ["beth", "gems", "nexus", "steam"]
     natbs = ["category", "tag"]
