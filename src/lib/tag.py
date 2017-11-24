@@ -53,7 +53,6 @@ def load_tagdb(path: str) -> dict:
 def save_tagdb(path: str, tagdb: dict) -> None:
     """Save the tag database to disk."""
     # TODO: test and review database saving
-    opf = open(path, "w")
     
     atbs = ["beth", "gems", "nexus", "steam"]
     natbs = ["category", "tag"]
@@ -81,6 +80,8 @@ def save_tagdb(path: str, tagdb: dict) -> None:
         buffs += "</tag>\n"
     buffs += "</taglist>"
     
+    #with open(file) as handle:
+    opf = open(path, "w")
     opf.write(buffs)
     opf.close()
 
