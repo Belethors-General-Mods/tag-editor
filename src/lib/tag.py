@@ -66,24 +66,22 @@ def save_tagdb(path: str, tagdb: dict) -> None:
             nempty = True
             if (len(tagdb[i][atb]) > 0 and atb != "nexus"):
                 for si in tagdb[i][atb]:
-                    buffs += "\t\t<" + atb + ">" + str(si) + "<" + atb + "/>\n"
+                    buffs += "\t\t<" + atb + ">" + str(si) + "</" + atb + ">\n"
             elif (len(tagdb[i][atb]) > 0 and atb == "nexus"):
                 for natb in natbs:
                     if (len(tagdb[i][atb][natb]) > 0):
                         for si in tagdb[i][atb][natb]:
-                            buffs += "\t\t<" + atb + " type=\"" + natb + "\">" + str(si) + "<" + atb + "/>\n"
+                            buffs += "\t\t<" + atb + " type=\"" + natb + "\">" + str(si) + "</" + atb + ">\n"
                         nempty = False
                 if (nempty):
                     buffs += "\t\t<" + atb + " xsi:nil=\"true\" />\n"
             else:
                 buffs += "\t\t<" + atb + " xsi:nil=\"true\" />\n"
-        buffs += "</tag>\n"
+        buffs += "\t</tag>\n"
     buffs += "</taglist>"
     
-    #with open(file) as handle:
-    opf = open(path, "w")
-    opf.write(buffs)
-    opf.close()
+    with open(path, "w") as opf:
+        opf.write(buffs)
 
 
 def get_id_map(database: dict) -> dict:
