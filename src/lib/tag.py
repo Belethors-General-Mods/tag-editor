@@ -37,7 +37,7 @@ def load_tagdb(path: str) -> dict:
         database[tag['id']] = taginf
     return database
 
-#<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+#<?xml version="1.0" encoding="UTF-8"?>
 #
 #<tag-list xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 #  <tag id="1" name="Animation">
@@ -66,12 +66,12 @@ def save_tagdb(path: str, tagdb: dict) -> None:
             nempty = True
             if (len(tagdb[i][atb]) > 0 and atb != "nexus"):
                 for si in tagdb[i][atb]:
-                    buffs += "\t\t<" + atb + ">" + str(si) + "</" + atb + ">\n"
+                    buffs += "\t\t<" + atb + ">" + si + "</" + atb + ">\n"
             elif (len(tagdb[i][atb]) > 0 and atb == "nexus"):
                 for natb in natbs:
                     if (len(tagdb[i][atb][natb]) > 0):
                         for si in tagdb[i][atb][natb]:
-                            buffs += "\t\t<" + atb + " type=\"" + natb + "\">" + str(si) + "</" + atb + ">\n"
+                            buffs += "\t\t<" + atb + " type=\"" + natb + "\">" + si + "</" + atb + ">\n"
                         nempty = False
                 if (nempty):
                     buffs += "\t\t<" + atb + " xsi:nil=\"true\" />\n"
