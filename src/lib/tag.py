@@ -39,7 +39,7 @@ def load_tagdb(path: str) -> dict:
 
 
 # <?xml version="1.0" encoding="UTF-8"?>
-# 
+#
 # <tag-list xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 #   <tag id="1" name="Animation">
 #     <beth>Animations</beth>
@@ -56,33 +56,33 @@ def save_tagdb(path: str, tagdb: dict) -> None:
     """Save the tag database to disk."""
     # TODO: test and merge database saving
 
-    atbs = ["beth", "gems", "nexus", "steam"]
-    natbs = ["category", "tag"]
+    atbs = ['beth', 'gems', 'nexus', 'steam']
+    natbs = ['category', 'tag']
 
-    buffs = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n\n"
-    buffs = f"{buffs}<taglist xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n"
+    buffs = '<?xml version="1.0" encoding="UTF-8"?>\n\n'
+    buffs += '<taglist xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\n'
 
     for i in tagdb:
-        buffs = f"{buffs}\t<tag id=\"{i}\" name=\"{tagdb[i]['name']}\">\n"
+        buffs += f'\t<tag id="{i}" name="{tagdb[i]["name"]}">\n'
         for atb in atbs:
             nempty = True
-            if (len(tagdb[i][atb]) > 0 and atb != "nexus"):
+            if tagdb[i][atb] and atb != 'nexus':
                 for si in tagdb[i][atb]:
-                    buffs = f"{buffs}\t\t<{atb}}>{si}</{atb}}>\n"
-            elif (len(tagdb[i][atb]) > 0 and atb == "nexus"):
+                    buffs += f'\t\t<{atb}>{si}</{atb}>\n'
+            elif tagdb[i][atb] and atb == 'nexus':
                 for natb in natbs:
-                    if (len(tagdb[i][atb][natb]) > 0):
+                    if tagdb[i][atb][natb]:
                         for si in tagdb[i][atb][natb]:
-                            buffs = f"{buffs}\t\t<{atb} type=\"{natb}\">{si}</{atb}>\n"
+                            buffs = f'\t\t<{atb} type="{natb}">{si}</{atb}>\n'
                         nempty = False
-                if (nempty):
-                    buffs = f"{buffs}\t\t<{atb} xsi:nil=\"true\" />\n"
+                if nempty:
+                    buffs += f'\t\t<{atb} xsi:nil=\"true\" />\n'
             else:
-                buffs = f"{buffs}\t\t<{atb} xsi:nil=\"true\" />\n"
-        buffs = f"{buffs}\t</tag>\n"
-    buffs = f"{buffs}</taglist>"
+                buffs += f'\t\t<{atb} xsi:nil=\"true\" />\n'
+        buffs += '\t</tag>\n'
+    buffs += '</taglist>'
 
-    with open(path, "w") as opf:
+    with open(path, 'w') as opf:
         opf.write(buffs)
 
 
