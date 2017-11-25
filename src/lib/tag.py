@@ -73,7 +73,7 @@ def save_tagdb(path: str, tagdb: dict) -> None:
                 for natb in natbs:
                     if tagdb[i][atb][natb]:
                         for si in tagdb[i][atb][natb]:
-                            buffs = f'\t\t<{atb} type="{natb}">{si}</{atb}>\n'
+                            buffs += f'\t\t<{atb} type="{natb}">{si}</{atb}>\n'
                         nempty = False
                 if nempty:
                     buffs += f'\t\t<{atb} xsi:nil=\"true\" />\n'
