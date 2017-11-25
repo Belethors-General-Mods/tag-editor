@@ -37,29 +37,31 @@ def load_tagdb(path: str) -> dict:
         database[tag['id']] = taginf
     return database
 
-#<?xml version="1.0" encoding="UTF-8"?>
-#
-#<tag-list xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-#  <tag id="1" name="Animation">
-#    <beth>Animations</beth>
-#    <gems>160</gems>
-#    <nexus type="category">Animation</nexus>
-#    <nexus type="tag">Animation - Modified</nexus>
-#    <nexus type="tag">Animation - New</nexus>
-#    <steam xsi:nil="true" />
-#  </tag>
-#</tag-list>
+
+# <?xml version="1.0" encoding="UTF-8"?>
+# 
+# <tag-list xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+#   <tag id="1" name="Animation">
+#     <beth>Animations</beth>
+#     <gems>160</gems>
+#     <nexus type="category">Animation</nexus>
+#     <nexus type="tag">Animation - Modified</nexus>
+#     <nexus type="tag">Animation - New</nexus>
+#     <steam xsi:nil="true" />
+#   </tag>
+# </tag-list>
+
 
 def save_tagdb(path: str, tagdb: dict) -> None:
     """Save the tag database to disk."""
     # TODO: test and merge database saving
-    
+
     atbs = ["beth", "gems", "nexus", "steam"]
     natbs = ["category", "tag"]
-    
+
     buffs = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n\n"
     buffs = f"{buffs}<taglist xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n"
-    
+
     for i in tagdb:
         buffs = f"{buffs}\t<tag id=\"{i}\" name=\"{tagdb[i]['name']}\">\n"
         for atb in atbs:
@@ -79,7 +81,7 @@ def save_tagdb(path: str, tagdb: dict) -> None:
                 buffs = f"{buffs}\t\t<{atb} xsi:nil=\"true\" />\n"
         buffs = f"{buffs}\t</tag>\n"
     buffs = f"{buffs}</taglist>"
-    
+
     with open(path, "w") as opf:
         opf.write(buffs)
 
