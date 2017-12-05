@@ -9,6 +9,7 @@ Current Roadmap
 
 - [ ] Tag-editor
   - [x] list tags
+  - [x] save tagdb
   - [ ] add
     - [ ] auto-sort
   - [x] delete
