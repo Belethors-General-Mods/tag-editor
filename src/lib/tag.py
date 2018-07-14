@@ -1,6 +1,6 @@
 """Functions for manipulating the tag database."""
 
-from copy import copy
+from copy import deepcopy
 
 from typing import Dict, List, Union
 
@@ -23,7 +23,7 @@ def load_tagdb(path: str) -> dict:
     for tag in xml.taglist.children:
         if tag['id'] in database.keys():
             raise ValueError(f'Duplicate tag ID: {tag["id"]}')
-        taginf = copy(TAG_TEMPLATE)  # dear python: why is deepcopy not default
+        taginf = deepcopy(TAG_TEMPLATE)  # dear python: why is deepcopy not default
         taginf['name'] = tag['name']
         for url in tag.children:
             name = url._name  # pylint: disable=W0212
@@ -38,10 +38,52 @@ def load_tagdb(path: str) -> dict:
     return database
 
 
+# <?xml version="1.0" encoding="UTF-8"?>
+#
+# <tag-list xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+#   <tag id="1" name="Animation">
+#     <beth>Animations</beth>
+#     <gems>160</gems>
+#     <nexus type="category">Animation</nexus>
+#     <nexus type="tag">Animation - Modified</nexus>
+#     <nexus type="tag">Animation - New</nexus>
+#     <steam xsi:nil="true" />
+#   </tag>
+# </tag-list>
+
+
 def save_tagdb(path: str, tagdb: dict) -> None:
     """Save the tag database to disk."""
-    # TODO: implement database saving
-    pass
+    # TODO: test and merge database saving
+
+    atbs = ['beth', 'gems', 'nexus', 'steam']
+    natbs = ['category', 'tag']
+
+    buffs = '<?xml version="1.0" encoding="UTF-8"?>\n\n'
+    buffs += '<taglist xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\n'
+
+    for i in tagdb:
+        buffs += f'\t<tag id="{i}" name="{tagdb[i]["name"]}">\n'
+        for atb in atbs:
+            nempty = True
+            if tagdb[i][atb] and atb != 'nexus':
+                for si in tagdb[i][atb]:
+                    buffs += f'\t\t<{atb}>{si}</{atb}>\n'
+            elif tagdb[i][atb] and atb == 'nexus':
+                for natb in natbs:
+                    if tagdb[i][atb][natb]:
+                        for si in tagdb[i][atb][natb]:
+                            buffs += f'\t\t<{atb} type="{natb}">{si}</{atb}>\n'
+                        nempty = False
+                if nempty:
+                    buffs += f'\t\t<{atb} xsi:nil=\"true\" />\n'
+            else:
+                buffs += f'\t\t<{atb} xsi:nil=\"true\" />\n'
+        buffs += '\t</tag>\n'
+    buffs += '</taglist>'
+
+    with open(path, 'w') as opf:
+        opf.write(buffs)
 
 
 def get_id_map(database: dict) -> dict:
