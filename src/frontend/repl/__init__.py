@@ -4,7 +4,7 @@ import os
 
 from cmd import Cmd
 
-from copy import copy
+from copy import deepcopy
 
 from typing import List, Optional
 
@@ -75,10 +75,19 @@ class REPL(Cmd):
 
     def update_database(self) -> None:
         """Update the database."""
+        self.load_database()
+        if self.database:
+            self.__orig_database = deepcopy(self.database)
+            self.update_mapping()
+
+    def load_database(self) -> None:
+        """Reload the database."""
         log.d('loading the database')
-        self.database = tag.load_tagdb(self.path)
-        self.__orig_database = copy(self.database)
-        self.update_mapping()
+        try:
+            self.database = tag.load_tagdb(self.path)
+        except Exception as exc:
+            log.e('An error occurred while loading the database!')
+            log.e(f'└> {color.BOLD}{exc}{color.UNBOLD}')
 
     def update_mapping(self) -> None:
         """Update the mapping."""
@@ -136,7 +145,7 @@ class REPL(Cmd):
             log.e('The database is already loaded!')
             return
 
-        self.database = tag.load_tagdb(self.path)
+        self.load_database()
 
     def do_unload(self, _: str) -> None:
         """Unload the database without saving."""
@@ -266,5 +275,5 @@ class REPL(Cmd):
             log.e('The database is not loaded!')
             return
         tag.save_tagdb(self.path, self.database)
-        self.__orig_database = copy(self.database)
+        self.__orig_database = deepcopy(self.database)
         self.update_mapping()
