@@ -98,3 +98,6 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+# keeping a backup of the testing xml | zaki
+src/taglist_backup.xml

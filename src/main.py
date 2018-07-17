@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-"""Tag editor for the BGM project."""
+
+# Tag editor for the BGM project.
 
 import traceback
 
@@ -21,9 +22,16 @@ def main() -> None:
     parser.add_argument("-f", "--frontend", action="store_true",
         help='flag for using the frontend')
     
+    
     args = parser.parse_args()
     # print args for debug purposes
     print(args)
+    
+    db = tag.DB()
+    db_hist = [db]
+    
+    ftag = tag.FTAG(config, db, db_hist)
+    ftag.load_database()
     
     # frontend loading is optional.
     if args.frontend:

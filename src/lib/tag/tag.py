@@ -1,4 +1,4 @@
-"""Functions for manipulating the tag database."""
+# Functions for interfacing with the tag database.
 
 from copy import deepcopy
 
@@ -15,6 +15,19 @@ TAG_TEMPLATE: Dict[str, Union[str, List[str], Dict[str, List[str]]]] = {
     'name': '',
 }
 
+
+# <?xml version="1.0" encoding="UTF-8"?>
+#
+# <tag-list xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+#   <tag id="1" name="Animation">
+#     <beth>Animations</beth>
+#     <gems>160</gems>
+#     <nexus type="category">Animation</nexus>
+#     <nexus type="tag">Animation - Modified</nexus>
+#     <nexus type="tag">Animation - New</nexus>
+#     <steam xsi:nil="true" />
+#   </tag>
+# </tag-list>
 
 def load_tagdb(path: str) -> dict:
     # Load the tag database from disk.
@@ -36,20 +49,6 @@ def load_tagdb(path: str) -> dict:
                 taginf[name].append(link)
         database[tag['id']] = taginf
     return database
-
-
-# <?xml version="1.0" encoding="UTF-8"?>
-#
-# <tag-list xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-#   <tag id="1" name="Animation">
-#     <beth>Animations</beth>
-#     <gems>160</gems>
-#     <nexus type="category">Animation</nexus>
-#     <nexus type="tag">Animation - Modified</nexus>
-#     <nexus type="tag">Animation - New</nexus>
-#     <steam xsi:nil="true" />
-#   </tag>
-# </tag-list>
 
 
 def save_tagdb(path: str, tagdb: dict) -> None:
