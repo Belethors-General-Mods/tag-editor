@@ -1,4 +1,4 @@
-"""Interactive REPL frontend for tag-editor."""
+# Interactive REPL frontend for tag-editor.
 
 import os
 
@@ -16,21 +16,21 @@ from zenlog import log
 
 
 def ask(question: str) -> str:
-    """Ask the user to provide a value for something."""
+    # Ask the user to provide a value for something.
     print(question)
     response = input()
     return response
 
 
 def confirm() -> bool:
-    """Ask the user for confirmation."""
+    # Ask the user for confirmation.
     print('Are you sure you want to continue? [Y/n]')
     choice = input().lower()
     return 'yes'.startswith(choice)
 
 
 def choices(items: List[str]) -> str:
-    """Present the user with a list of choices."""
+    # Present the user with a list of choices.
     items.append('Cancel')
     while True:
         count = 0
@@ -46,10 +46,10 @@ def choices(items: List[str]) -> str:
 
 
 class REPL(Cmd):
-    """A repl to execute multiple commands in a repo."""
+    # A repl to execute multiple commands in a repo.
 
     def __init__(self, config: dict) -> None:
-        """Initialize the REPL with a config."""
+        # Initialize the REPL with a config.
         super(REPL, self).__init__()
         self.config = config
         self.path = config['tag_db_path']
@@ -66,7 +66,7 @@ class REPL(Cmd):
     prompt = color.colorize(color.FGGREEN, '$ ')
 
     def default(self, line: str) -> bool:
-        """Override error output to fit with zenlog."""
+        # Override error output to fit with zenlog.
         if line == 'EOF':
             print()
             return self.do_exit(line)
@@ -74,14 +74,14 @@ class REPL(Cmd):
         return False
 
     def update_database(self) -> None:
-        """Update the database."""
+        # Update the database.
         self.load_database()
         if self.database:
             self.__orig_database = deepcopy(self.database)
             self.update_mapping()
 
     def load_database(self) -> None:
-        """Reload the database."""
+        # Reload the database.
         log.d('loading the database')
         try:
             self.database = tag.load_tagdb(self.path)
@@ -90,7 +90,7 @@ class REPL(Cmd):
             log.e(f'└> {color.BOLD}{exc}{color.UNBOLD}')
 
     def update_mapping(self) -> None:
-        """Update the mapping."""
+        # Update the mapping.
         log.d('building id mapping')
         if self.database is None:
             log.e('The database is not loaded!')
@@ -98,12 +98,12 @@ class REPL(Cmd):
         self.mapping = tag.get_id_map(self.database)
 
     def preloop(self) -> None:
-        """Load the tag database into memory."""
+        # Load the tag database into memory.
         log.d('preloop')
         self.update_database()
 
     def postcmd(self, stop: Optional[bool], line: str) -> bool:
-        """Update internal state after each command."""
+        # Update internal state after each command.
         self.changed = self.database == self.__orig_database
         return bool(stop)
 
@@ -114,7 +114,7 @@ class REPL(Cmd):
     # pylint: disable=R0201
 
     def do_printtag(self, tag_name: str) -> None:
-        """Print the raw tag data."""
+        # Print the raw tag data.
         if self.database is None:
             log.e('The database is not loaded!')
             return
@@ -127,7 +127,7 @@ class REPL(Cmd):
         print(self.database[tag_name])
 
     def do_exit(self, _: str) -> bool:
-        """Exit the command interpreter."""
+        # Exit the command interpreter.
         confirmed = not self.changed
         if self.changed:
             log.w('You have unsaved changes!')
@@ -140,7 +140,7 @@ class REPL(Cmd):
         return False
 
     def do_load(self, _: str) -> None:
-        """Load the tag database into memory."""
+        # Load the tag database into memory.
         if self.database is not None:
             log.e('The database is already loaded!')
             return
@@ -148,7 +148,7 @@ class REPL(Cmd):
         self.load_database()
 
     def do_unload(self, _: str) -> None:
-        """Unload the database without saving."""
+        # Unload the database without saving.
         if self.database is None:
             log.e('The database is not loaded!')
             return
@@ -163,7 +163,7 @@ class REPL(Cmd):
             log.i('Canceled.')
 
     def do_list(self, _: str) -> None:
-        """List all tags."""
+        # List all tags.
         if self.database is None:
             log.e('The database is not loaded!')
             return
@@ -172,7 +172,7 @@ class REPL(Cmd):
             print(tag_data['name'])
 
     # def do_add(self, tag_name: str) -> None:
-    #     """Add a new tag."""
+    #     # Add a new tag.
     #     if self.database is None:
     #         log.e('The database is not loaded!')
     #         return
@@ -188,7 +188,7 @@ class REPL(Cmd):
     #     self.database[tag_name] = new_tag
 
     def do_delete(self, tag_name: str) -> None:
-        """Delete a tag."""
+        # Delete a tag.
         if self.database is None:
             log.e('The database is not loaded!')
             return
@@ -206,7 +206,7 @@ class REPL(Cmd):
             log.i('Done.')
 
     def do_edit(self, tag_name: str) -> None:
-        """Edit a tag."""
+        # Edit a tag.
         if self.database is None:
             log.e('The database is not loaded!')
             return
@@ -266,11 +266,11 @@ class REPL(Cmd):
     # def do_sort(self, _: str) -> bool:
 
     # def do_unused(self, _: str) -> None:
-    #     """List unused tag IDs."""
+    #     # List unused tag IDs.
     #     pass
 
     def do_save(self, _: str) -> None:
-        """Save changes to the database."""
+        # Save changes to the database.
         if self.database is None:
             log.e('The database is not loaded!')
             return

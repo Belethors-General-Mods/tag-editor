@@ -17,7 +17,7 @@ TAG_TEMPLATE: Dict[str, Union[str, List[str], Dict[str, List[str]]]] = {
 
 
 def load_tagdb(path: str) -> dict:
-    """Load the tag database from disk."""
+    # Load the tag database from disk.
     xml = untangle.parse(path)
     database = {}
     for tag in xml.taglist.children:
@@ -53,7 +53,7 @@ def load_tagdb(path: str) -> dict:
 
 
 def save_tagdb(path: str, tagdb: dict) -> None:
-    """Save the tag database to disk."""
+    # Save the tag database to disk.
     # TODO: test and merge database saving
 
     atbs = ['beth', 'gems', 'nexus', 'steam']
@@ -87,7 +87,7 @@ def save_tagdb(path: str, tagdb: dict) -> None:
 
 
 def get_id_map(database: dict) -> dict:
-    """Make a Name to ID mapping from the database."""
+    # Make a Name to ID mapping from the database.
     mapping = {}
     for _id in database:
         name = database[_id]['name']
