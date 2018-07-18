@@ -178,14 +178,27 @@ class FTAG(object):
                 retval["retval"].append(tag_data["name"])
         return retval
 
+    def get_next_free_id(self) -> RETV_TMP:
+        # finds out the biggest ID currently used (n), and returns n+1
+        retval = deepcopy(RETV_TMP)
+        retval = self.db_update_mapping()
+        retval["retval"] = 0
+        if retval["success"]:
+            for id in self.mapping.values():
+                if retval["retval"] < id:
+                    retval["retval"] = id
+            retval["retval"] += 1
+        return retval
 
-    def do_add(self, tlist: Optional[list]) -> None:  # TODO
+
+    def do_add(self, tlist: Optional[list]) -> RETV_TMP:  # TODO
         # Add a new tag.
         retval = deepcopy(RETV_TMP)
-        retval = self.db_check()
+        retval = self.get_next_free_id()
         if retval["success"]:
-            # tag_name = tag.next_free_id(self.database)
-        
+            print("lol this isn't really finished yet")
+            # TODO: finish dis!
+        return retval
 
 
     def do_delete(self, tag_name: str) -> None:  # TODO
@@ -222,6 +235,7 @@ class FTAG(object):
 
     def do_sort(self, _: str) -> bool:  # TODO
         return
+
 
     def do_unused(self, _: str) -> None:  # TODO ??
         # List unused tag IDs.
