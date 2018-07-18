@@ -33,6 +33,7 @@ def main() -> None:
     ftag = tag.FTAG(config, db, db_hist)
     ftag.load_database()
     
+    
     # frontend loading is optional.
     if args.frontend:
         repl = REPL(config)

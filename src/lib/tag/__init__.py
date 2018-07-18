@@ -12,11 +12,20 @@ from lib import color
 
 from lib.tag import tag
 
+TAG_TEMPLATE: Dict[str, Union[str, List[str], Dict[str, List[str]]]] = {
+    'beth': [],
+    'gems': [],
+    'nexus': {'category': [], 'tag': []},
+    'steam': [],
+    'name': '',
+}
 
+# Uniform return value for the entire wrapper / functional layer
 RETV_TMP: Dict[str, Union[bool, str, object]] = {
-    "success": bool,
-    "msg": str,
-    "retval": object
+    "success": bool,  # ALWAYS tells if the fuction you asked for could run successfully.
+    "msg": str,  # String message - can contain error messages or general information (!) Not used in every case
+    "retval": object  # If a function has a return value other than its success and message, it goes in this field
+    # "retval" is NOT used in every case
 }
 
 # log.c("this is critical")
@@ -45,138 +54,141 @@ class FTAG(object):
         self.database = database
         self.db_history = dbhistory
         self.mapping: dict = {}
+        # and now... DANCE
 
-    def load_database(self) -> None:
+    def db_load(self) -> RETV_TMP:
         # Load the database.
         retval = deepcopy(RETV_TMP)
         log.d("loading the database")
         try:
             self.database = tag.load_tagdb(self.path)
-            retval["success"] = True
+            retval["success"] = True  # It's that easy. ¯\_(ツ)_/¯
         except Exception as exc:
             retval["msg"] = "An error occurred while loading the database!\n" + f"└> {color.BOLD}{exc}{color.UNBOLD}"
             retval["success"] = False
             log.e(retval["msg"])
         return retval
 
-    def update_mapping(self) -> None:
+    def db_save(self) -> None:
+        # Save changes to the database.
+        retval = deepcopy(RETV_TMP)
+        log.d("saving the database")
+        retval = self.db_check()
+        if retval["success"]:
+            try:
+                tag.save_tagdb(self.path, self.database)
+                self.db_history.append(self.database)  # TODO fix
+                self.db_update_mapping()
+            except Exception as exc:
+                retval["msg"] = "An error occurred while saving the database!\n" + f"└> {color.BOLD}{exc}{color.UNBOLD}"
+                retval["success"] = False
+                log.e(retval["msg"])
+        return retval
+
+    def db_unload(self) -> RETV_TMP:
+        # Unload the database without saving.
+        retval = deepcopy(RETV_TMP)
+        retval["success"] = True
+        self.database = None
+        return retval
+
+    def db_update_mapping(self) -> RETV_TMP:
         # Update the mapping.
         retval = deepcopy(RETV_TMP)
         log.d("building id mapping")
-        if self.database is None:
-            retval["msg"] = "The database is not loaded!"
-            retval["success"] = False
-            log.e(retval["msg"])
-            return retval
-        self.mapping = tag.get_id_map(self.database)
-        retval["success"] = True
+        retval = self.db_check()
+        if retval["success"]:
+            self.mapping = tag.get_id_map(self.database)
         return retval
 
-    def update_database(self) -> None:
+    def db_update(self) -> RETV_TMP:
         # Update the database.
         retval = deepcopy(RETV_TMP)
         try:
-            self.db_history.append(self.database)
-            retval = self.load_database()
-            retval = self.update_mapping()
+            self.db_history.append(self.database)  # TODO fix
+            retval = self.db_load()
+            retval = self.db_update_mapping()
         except Exception as exc:
             retval["msg"] = "Oops! Something went wrong!\n" + f"└> {color.BOLD}{exc}{color.UNBOLD}"
             retval["success"] = False
             log.e(retval["msg"])
         return retval
 
-    def postcmd(self, stop: Optional[bool], line: str) -> bool:
-        # Update internal state after each command.
-        self.changed = self.database == self.__orig_database
-        return bool(stop)
-
-    # ---------------------------------------------------------------------- #
-
-    # disable warnings about methods which could be functions since not
-    #  all repl commands need `self`
-    # pylint: disable=R0201
-
-
-    def do_printtag(self, tag_name: str) -> None:
-        # Print the raw tag data.
+    def db_check(self) -> RETV_TMP:
+        # Check if the database(s) exist (aka. loaded into memory)
+        retval = deepcopy(RETV_TMP)
+        retval["msg"] = "The database is loaded!"  # we hope.
+        retval["success"] = True
         if self.database is None:
-            log.e("The database is not loaded!")
-            return
-        if tag_name not in self.database:
-            if tag_name in self.mapping:
-                tag_name = self.mapping[tag_name]
+            retval["msg"] = "The database is not loaded!"  # no u
+            retval["success"] = False
+            log.e(retval["msg"])
+            return retval
+        if self.db_history is None:
+            retval["msg"] = "The database history is not loaded!"  # wtf??
+            retval["success"] = False
+            log.e(retval["msg"])
+            return retval
+        return retval
+
+    def get_tag(self, tag_name: str) -> RETV_TMP:
+        # Throw back the raw tag data - for printing or what
+        retval = deepcopy(RETV_TMP)
+        retval = self.db_check()
+        if retval["success"]:
             if tag_name not in self.database:
-                log.e(f"No such tag \"{tag_name}\"")
-                return
-        print(self.database[tag_name])
+                if tag_name in self.mapping:
+                    tag_name = self.mapping[tag_name]
+                if tag_name not in self.database:
+                    retval["msg"] = f"No such tag \"{tag_name}\""
+                    retval["success"] = False
+                    log.e(retval["msg"])
+                    return retval
+            # we are okay ᕙ( ͠°‿ °)ᕗ
+            retval["msg"] = str(self.database[tag_name])
+            retval["success"] = True
+            retval["retval"] = self.database[tag_name]
+            # HASHTAG YOLO
+        return retval
+    
+    def get_modified_state(self) -> RETV_TMP:
+        # See if the last two states of the database are the same. (Aka. DID YOU FUCKING SAVE??)
+        retval = deepcopy(RETV_TMP)
+        retval = self.db_check()
+        if retval["success"]:
+            if self.database == self.db_history[len(self.db_history)]:  # TODO: test this, it might break stuff
+                retval["msg"] = "Not changed"
+                retval["success"] = True
+                retval["retval"] = False
+                log.e(retval["msg"])
+            else:
+                retval["msg"] = "Changed"
+                retval["success"] = True
+                retval["retval"] = True
+                log.e(retval["msg"])
+        return retval
 
-
-    def do_exit(self, _: str) -> bool:
-        # Exit the command interpreter.
-        confirmed = not self.changed
-        if self.changed:
-            log.w("You have unsaved changes!")
-            confirmed = confirm()
-        if confirmed:
-            log.i("Bye!")
-            return True
-        else:
-            log.i("Canceled.")
-        return False
-
-
-    def do_load(self, _: str) -> None:
-        # Load the tag database into memory.
-        if self.database is not None:
-            log.e("The database is already loaded!")
-            return
-
-        self.load_database()
-
-
-    def do_unload(self, _: str) -> None:
-        # Unload the database without saving.
-        if self.database is None:
-            log.e("The database is not loaded!")
-            return
-
-        confirmed = not self.changed
-        if self.changed:
-            log.w("You have unsaved changes!")
-            confirmed = confirm()
-        if confirmed:
-            self.database = None
-        else:
-            log.i("Canceled.")
-
-
-    def do_list(self, _: str) -> None:
+    def get_list(self) -> RETV_TMP:
         # List all tags.
-        if self.database is None:
-            log.e("The database is not loaded!")
-            return
-
-        for tag_data in self.database.values():
-            print(tag_data["name"])
-
-    # def do_add(self, tag_name: str) -> None:
-    #     # Add a new tag.
-    #     if self.database is None:
-    #         log.e("The database is not loaded!")
-    #         return
-    #
-    #     name = tag_name
-    #     # tag_name = tag.next_free_id(self.database)
-    #
-    #     new_tag = tag.TAG_TEMPLATE
-    #     while True:
-    #         options = ["Gems", "Nexus", "Steam", "Bethesda"]
-    #         choice = choices(options)
-    #
-    #     self.database[tag_name] = new_tag
+        retval = deepcopy(RETV_TMP)
+        retval = self.db_check()
+        if retval["success"]:
+            retval["retval"] = []
+            for tag_data in self.database.values():
+                retval["retval"].append(tag_data["name"])
+        return retval
 
 
-    def do_delete(self, tag_name: str) -> None:
+    def do_add(self, tlist: Optional[list]) -> None:  # TODO
+        # Add a new tag.
+        retval = deepcopy(RETV_TMP)
+        retval = self.db_check()
+        if retval["success"]:
+            # tag_name = tag.next_free_id(self.database)
+        
+
+
+    def do_delete(self, tag_name: str) -> None:  # TODO
         # Delete a tag.
         if self.database is None:
             log.e("The database is not loaded!")
@@ -195,76 +207,22 @@ class FTAG(object):
             log.i("Done.")
 
 
-    def do_edit(self, tag_name: str) -> None:
+    def do_edit(self, tag_name: str) -> None:  # TODO
         # Edit a tag.
-        if self.database is None:
-            log.e("The database is not loaded!")
-            return
-        if tag_name not in self.database:
-            if tag_name in self.mapping:
-                tag_name = self.mapping[tag_name]
+        retval = deepcopy(RETV_TMP)
+        retval = self.db_check()
+        if retval["success"]:  # TODO here on out
             if tag_name not in self.database:
-                log.e(f"No such tag \"{tag_name}\"")
-                return
-
-        # $ edit <tag name>
-        # -> list of properties to edit
-        # $ id | name
-        # -> ask for new value
-        # $ gems | nexus | steam | bethesda
-        # ? 1+ values already
-        # -> add or remove values
-        # $ add
-        # -> : 0 values
-        # $ remove
-        # -> list of values to remove + done
-        # : 0 values
-        # -> prompt for value
-        # $ <value>
-        # -> prompt again
-        # $ <empty>
-        # -> done
-
-        m1_options = list(self.database[tag_name].keys())
-        m1_options.append("id")
-        choice = choices(m1_options).lower()
-        if choice in ["id", "name"]:
-            value = ask(f"New value for {choice}:")
-            self.database[tag_name][choice] = value
-            self.update_mapping()
-            return
-        if choice == "Cancel":
-            return
-        else:
-            log.d("NOTE: GENERIC PROPERTY")
-            old_val = self.database[tag_name][choice]
-            if old_val is not None:
-                if isinstance(old_val, list):
-                    # append or remove entries
-                    print("IT WAS A LIST")
-                else:
-                    print(color.colorize(
-                        color.FGYELLOW,
-                        f"This property already has a value of {old_val}."
-                        "Are you sure you want to overwrite it?"
-                    ))
-                    yn = choices(["Overwrite"])
-                    print(yn)
-            else:
-                print("NO PREVIOUS VALUE")
-
-    # def do_sort(self, _: str) -> bool:
-
-    # def do_unused(self, _: str) -> None:
-    #     # List unused tag IDs.
-    #     pass
+                if tag_name in self.mapping:
+                    tag_name = self.mapping[tag_name]
+                if tag_name not in self.database:
+                    log.e(f"No such tag \"{tag_name}\"")
+                    return
 
 
-    def do_save(self, _: str) -> None:
-        # Save changes to the database.
-        if self.database is None:
-            log.e("The database is not loaded!")
-            return
-        tag.save_tagdb(self.path, self.database)
-        self.__orig_database = deepcopy(self.database)
-        self.update_mapping()
+    def do_sort(self, _: str) -> bool:  # TODO
+        return
+
+    def do_unused(self, _: str) -> None:  # TODO ??
+        # List unused tag IDs.
+        return
