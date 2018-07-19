@@ -19,9 +19,19 @@ def main() -> None:
     # Start the program.
     
     parser = argparse.ArgumentParser(description="Use the BGM management tool from the command line, Huzzah!")
+    
     parser.add_argument("-f", "--frontend", action="store_true",
         help="flag for using the frontend")
-    parser.add_argument("-g")
+    parser.add_argument("-g", "--get-tag",
+        help="asks for the tag under the given name or ID and prints it")
+    parser.add_argument("-l", "--list",
+        help="lists all tags")
+    parser.add_argument("-a", "--add",
+        help="creates and adds a tag to the database")
+    parser.add_argument("-d", "--delete",
+        help="deletes all the specified tags")
+    parser.add_argument("-e", "--edit",
+        help="edits a tag's properties")
     
     # get_tag(self, tag_name: str) -> RETV_TMP:
     # get_list(self) -> RETV_TMP:
