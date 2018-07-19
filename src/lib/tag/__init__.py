@@ -114,10 +114,8 @@ class FTAG(object):
             log.e(retval["msg"])
         return retval
 
-
     def db_sort(self, _: str) -> bool:  # TODO
         return
-
 
     def db_check(self) -> RETV_TMP:
         # Check if the database(s) exist (aka. loaded into memory)
@@ -195,11 +193,9 @@ class FTAG(object):
             retval["retval"] += 1
         return retval
 
-
-    def get_unused(self, _: str) -> None:  # TODO ??
-        # List unused tag IDs.
-        return
-
+    # def get_unused(self) -> None:  # TODO ??
+    #     # List unused tag IDs. (and tags?)
+    #     return
 
     def tag_construct(self, beth: str, gems: str, ncategory: str, ntag: str, steam: str, name: str) -> RETV_TMP:
         # Construct a new tag.
@@ -261,7 +257,6 @@ class FTAG(object):
                 self.database.pop(tag_name, None)
         return retval
 
-
     def tag_edit(self, tag_name: str, beth: str, gems: str, ncategory: str, ntag: str, steam: str, name: str) -> RETV_TMP:
         # Edit a tag.
         retval = deepcopy(RETV_TMP)
@@ -275,5 +270,17 @@ class FTAG(object):
                     retval["success"] = False
                     log.e(retval["msg"])
                     return retval
-            
+            if beth is not None:
+                self.database[tag_name]["beth"] = beth
+            if gems is not None:
+                self.database[tag_name]["gems"] = gems
+            if ncategory is not None:
+                self.database[tag_name]["nexus"]["category"] = ncategory
+            if ntag is not None:
+                self.database[tag_name]["nexus"]["tag"] = ntag
+            if steam is not None:
+                self.database[tag_name]["steam"] = steam
+            if name is not None:
+                self.database[tag_name]["name"] = name
+            retval["msg"] = str(self.database[tag_name])
         return retval
