@@ -22,15 +22,20 @@ def main() -> None:
     
     parser.add_argument("-f", "--frontend", action="store_true",
         help="flag for using the frontend")
-    parser.add_argument("-g", "--get-tag",
-        help="asks for the tag under the given name or ID and prints it")
-    parser.add_argument("-l", "--list",
+    
+    parser.add_argument("-g", "--get-tag", nargs=1, default=None,
+        help="prints the tag under the given name or ID")
+    
+    parser.add_argument("-l", "--list", action="store_true",
         help="lists all tags")
-    parser.add_argument("-a", "--add",
+    
+    parser.add_argument("-a", "--add", nargs=1,
         help="creates and adds a tag to the database")
-    parser.add_argument("-d", "--delete",
+    
+    parser.add_argument("-d", "--delete", nargs="+",
         help="deletes all the specified tags")
-    parser.add_argument("-e", "--edit",
+    
+    parser.add_argument("-e", "--edit", nargs=1,
         help="edits a tag's properties")
     
     # get_tag(self, tag_name: str) -> RETV_TMP:
@@ -54,7 +59,11 @@ def main() -> None:
         db_hist = [db]
         
         ftag = tag.FTAG(config, db, db_hist)
-        ftag.load_database()
+        ftag.db_load()
+        
+        
+        # saving is on-hold until the bugs are sorted out
+        # ftag.db_save()
         pass
 
 
