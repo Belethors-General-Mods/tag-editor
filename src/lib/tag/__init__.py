@@ -69,14 +69,25 @@ class FTAG(object):
             log.e(retval["msg"])
         return retval
 
+    def db_sort(self) -> RETV_TMP:
+        # Sorts the tag database for saving
+        retval = deepcopy(RETV_TMP)
+        log.d("sorting the database")
+        retval = self.db_check()
+        if retval["success"]:
+            # Sort by key:
+            retval["retval"] = sorted(self.database.items(), key=lambda kv: kv[0])
+        return retval
+
     def db_save(self) -> None:
         # Save changes to the database.
         retval = deepcopy(RETV_TMP)
         log.d("saving the database")
-        retval = self.db_check()
+        retval = self.db_sort()
+        sorted_by_key = retval["retval"]
         if retval["success"]:
             try:
-                tag.save_tagdb(self.path, self.database)
+                tag.save_tagdb(self.path, sorted_by_key)
                 self.db_history.append(self.database)  # TODO fix
                 self.db_update_mapping()
             except Exception as exc:
@@ -113,9 +124,6 @@ class FTAG(object):
             retval["success"] = False
             log.e(retval["msg"])
         return retval
-
-    def db_sort(self, _: str) -> bool:  # TODO
-        return
 
     def db_check(self) -> RETV_TMP:
         # Check if the database(s) exist (aka. loaded into memory)
