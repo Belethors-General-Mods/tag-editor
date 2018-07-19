@@ -42,6 +42,21 @@ def main() -> None:
         ftag = tag.FTAG(config, db, db_hist)
         ftag.db_load()
         
+        if args.get_tag is not None:
+            for tag_name in args.get_tag:
+                rv = ftag.get_tag(tag_name)
+                print(rv["retval"])
+        elif args.list:
+            rv = ftag.get_list()
+            print(rv["retval"])
+        elif args.add:
+            pass
+        elif args.edit:
+            pass
+        elif args.delete:
+            pass
+        else:
+            pass
         
         # saving is on-hold until the bugs are sorted out
         # ftag.db_save()

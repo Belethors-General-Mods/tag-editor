@@ -33,8 +33,6 @@ RETV_TMP: Dict[str, Union[bool, str, object]] = {
 # log.e("this is error")
 # log.i("this is information")
 # log.w("this is warning")
-print("this is print")
-print(RETV_TMP)
 
 
 class DB(object):
