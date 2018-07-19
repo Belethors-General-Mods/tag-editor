@@ -21,31 +21,31 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Use the BGM management tool from the command line, Huzzah!")
     parser.add_argument("-f", "--frontend", action="store_true",
         help="flag for using the frontend")
-    parser.add_argument()
+    parser.add_argument("-g")
+    
+    # get_tag(self, tag_name: str) -> RETV_TMP:
+    # get_list(self) -> RETV_TMP:
+    # tag_construct(self, beth: str, gems: str, ncategory: str, ntag: str, steam: str, name: str) -> RETV_TMP:
+    # tag_add(self, tlist: Optional[list]) -> RETV_TMP:
+    # tag_delete(self, tlist: Optional[list]) -> RETV_TMP:
+    # tag_edit(self, tag_name: str, beth: str, gems: str, ncategory: str, ntag: str, steam: str, name: str) -> RETV_TMP:
     
     args = parser.parse_args()
-    
-    
-    
-    
     # print args for debug purposes
     print(args)
-    
-    db = tag.DB()
-    db_hist = [db]
-    
-    ftag = tag.FTAG(config, db, db_hist)
-    ftag.load_database()
-    
     
     # frontend loading is optional.
     if args.frontend:
         repl = REPL(config)
         repl.cmdloop()
         pass
-    
-    # TODO: add more arguments and make this thing useable with only arguments through the command line
-    # the whole repl thing is way more complicated than it really needs to be
+    else:
+        db = tag.DB()
+        db_hist = [db]
+        
+        ftag = tag.FTAG(config, db, db_hist)
+        ftag.load_database()
+        pass
 
 
 if __name__ == '__main__':
