@@ -28,7 +28,7 @@ def main() -> None:
     # tag_edit(self, tag_name: str, beth: str, gems: str, ncategory: str, ntag: str, steam: str, name: str) -> RETV_TMP:
     
     # print args for debug purposes
-    print(args)
+    # print(args)
     
     # frontend loading is optional.
     if args.frontend:

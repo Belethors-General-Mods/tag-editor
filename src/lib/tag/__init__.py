@@ -46,7 +46,7 @@ class FTAG(object):
     # The worker unit
     def __init__(self, config: dict, database: dict, dbhistory: list):
         super(FTAG, self).__init__()
-        print("Current working dir: " + os.getcwd())
+        # print("Current working dir: " + os.getcwd())
         self.config = config
         self.path = config["tag_db_path"]
         self.database = database
