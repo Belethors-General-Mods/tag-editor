@@ -208,7 +208,7 @@ class FTAG(object):
         return retval
 
     def tag_add(self, tlist: Optional[list]) -> RETV_TMP:
-        # Add a new tag.
+        # Add new tags. Or just one.
         retval = deepcopy(RETV_TMP)
         retval = self.get_next_free_id()
         if retval["success"]:  # Ok
@@ -233,24 +233,22 @@ class FTAG(object):
                 cid += 1  # increase current ID tracker
         return retval
 
-
-    def tag_delete(self, tag_name: str) -> None:  # TODO
-        # Delete a tag.
-        if self.database is None:
-            log.e("The database is not loaded!")
-            return
-        if tag_name not in self.database:
-            if tag_name in self.mapping:
-                tag_name = self.mapping[tag_name]
-            if tag_name not in self.database:
-                log.e(f"No such tag \"{tag_name}\"")
-                return
-
-        result = self.database.pop(tag_name, None)
-        if result is None:
-            log.e("No such tag")
-        else:
-            log.i("Done.")
+    def tag_delete(self, tlist: Optional[list]) -> RETV_TMP:
+        # Delete tags. Or just one.
+        retval = deepcopy(RETV_TMP)
+        retval = self.db_check()
+        if retval["success"]:
+            for tag_name in tlist:
+                if tag_name not in self.database:
+                    if tag_name in self.mapping:
+                        tag_name = self.mapping[tag_name]
+                if tag_name not in self.database:
+                    retval["msg"] = f"No such tag \"{tag_name}\""
+                    retval["success"] = False
+                    log.e(retval["msg"])
+                    return retval
+                self.database.pop(tag_name, None)
+        return retval
 
 
     def tag_edit(self, tag_name: str) -> None:  # TODO
