@@ -51,7 +51,7 @@ def load_tagdb(path: str) -> dict:
     return database
 
 
-def save_tagdb(path: str, tagdb: tuple) -> None:
+def save_tagdb(path: str, tagdb: dict) -> None:
     # Save the tag database to disk.
     # TODO: test and merge database saving
 
