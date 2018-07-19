@@ -190,18 +190,51 @@ class FTAG(object):
             retval["retval"] += 1
         return retval
 
+    def tag_construct(self, beth: str, gems: str, ncategory: str, ntag: str, steam: str, name: str) -> RETV_TMP:
+        # Construct a new tag.
+        retval = deepcopy(RETV_TMP)
+        retval["success"] = True
+        
+        new_tag = deepcopy(TAG_TEMPLATE)
+        new_tag["beth"] = beth
+        new_tag["gems"] = gems
+        new_tag["nexus"]["category"] = ncategory
+        new_tag["nexus"]["tag"] = ntag
+        new_tag["steam"] = steam
+        new_tag["name"] = name
+        
+        retval["msg"] = str(new_tag)
+        retval["retval"] = new_tag
+        return retval
 
-    def do_add(self, tlist: Optional[list]) -> RETV_TMP:  # TODO
+    def tag_add(self, tlist: Optional[list]) -> RETV_TMP:
         # Add a new tag.
         retval = deepcopy(RETV_TMP)
         retval = self.get_next_free_id()
-        if retval["success"]:
-            print("lol this isn't really finished yet")
-            # TODO: finish dis!
+        if retval["success"]:  # Ok
+            cid = retval["retval"]  # getting first current ID
+            for ntag in tlist:
+                if len(ntag) != 6:  # are you stupid?
+                    retval["msg"] = "Invalid format for new tag."
+                    retval["success"] = False
+                    log.e(retval["msg"])
+                    return retval  # guess you are
+                
+                new_tag = deepcopy(TAG_TEMPLATE)  # sofar so good
+                new_tag["beth"] = ntag[0]
+                new_tag["gems"] = ntag[1]
+                new_tag["nexus"]["category"] = ntag[2]
+                new_tag["nexus"]["tag"] = ntag[3]
+                new_tag["steam"] = ntag[4]
+                new_tag["name"] = ntag[5]
+                
+                self.database[new_tag["name"]] = new_tag  # let's hope these work this way
+                self.mapping[new_tag["name"]] = cid
+                cid += 1  # increase current ID tracker
         return retval
 
 
-    def do_delete(self, tag_name: str) -> None:  # TODO
+    def tag_delete(self, tag_name: str) -> None:  # TODO
         # Delete a tag.
         if self.database is None:
             log.e("The database is not loaded!")
@@ -220,7 +253,7 @@ class FTAG(object):
             log.i("Done.")
 
 
-    def do_edit(self, tag_name: str) -> None:  # TODO
+    def tag_edit(self, tag_name: str) -> None:  # TODO
         # Edit a tag.
         retval = deepcopy(RETV_TMP)
         retval = self.db_check()
@@ -233,10 +266,10 @@ class FTAG(object):
                     return
 
 
-    def do_sort(self, _: str) -> bool:  # TODO
+    def db_sort(self, _: str) -> bool:  # TODO
         return
 
 
-    def do_unused(self, _: str) -> None:  # TODO ??
+    def get_unused(self, _: str) -> None:  # TODO ??
         # List unused tag IDs.
         return
