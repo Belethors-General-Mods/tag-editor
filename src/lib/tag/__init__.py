@@ -114,6 +114,11 @@ class FTAG(object):
             log.e(retval["msg"])
         return retval
 
+
+    def db_sort(self, _: str) -> bool:  # TODO
+        return
+
+
     def db_check(self) -> RETV_TMP:
         # Check if the database(s) exist (aka. loaded into memory)
         retval = deepcopy(RETV_TMP)
@@ -190,6 +195,12 @@ class FTAG(object):
             retval["retval"] += 1
         return retval
 
+
+    def get_unused(self, _: str) -> None:  # TODO ??
+        # List unused tag IDs.
+        return
+
+
     def tag_construct(self, beth: str, gems: str, ncategory: str, ntag: str, steam: str, name: str) -> RETV_TMP:
         # Construct a new tag.
         retval = deepcopy(RETV_TMP)
@@ -251,23 +262,18 @@ class FTAG(object):
         return retval
 
 
-    def tag_edit(self, tag_name: str) -> None:  # TODO
+    def tag_edit(self, tag_name: str, beth: str, gems: str, ncategory: str, ntag: str, steam: str, name: str) -> RETV_TMP:
         # Edit a tag.
         retval = deepcopy(RETV_TMP)
         retval = self.db_check()
-        if retval["success"]:  # TODO here on out
+        if retval["success"]:
             if tag_name not in self.database:
                 if tag_name in self.mapping:
                     tag_name = self.mapping[tag_name]
                 if tag_name not in self.database:
-                    log.e(f"No such tag \"{tag_name}\"")
-                    return
-
-
-    def db_sort(self, _: str) -> bool:  # TODO
-        return
-
-
-    def get_unused(self, _: str) -> None:  # TODO ??
-        # List unused tag IDs.
-        return
+                    retval["msg"] = f"No such tag \"{tag_name}\""
+                    retval["success"] = False
+                    log.e(retval["msg"])
+                    return retval
+            
+        return retval
