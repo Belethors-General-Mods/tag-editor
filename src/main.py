@@ -18,12 +18,16 @@ from zenlog import log
 def main() -> None:
     # Start the program.
     
-    parser = argparse.ArgumentParser(description='Use the BGM management tool from the command line, Huzzah!')
+    parser = argparse.ArgumentParser(description="Use the BGM management tool from the command line, Huzzah!")
     parser.add_argument("-f", "--frontend", action="store_true",
-        help='flag for using the frontend')
-    
+        help="flag for using the frontend")
+    parser.add_argument()
     
     args = parser.parse_args()
+    
+    
+    
+    
     # print args for debug purposes
     print(args)
     

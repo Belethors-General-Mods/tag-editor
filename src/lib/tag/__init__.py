@@ -79,7 +79,7 @@ class FTAG(object):
             retval["retval"] = sorted(self.database.items(), key=lambda kv: kv[0])
         return retval
 
-    def db_save(self) -> None:
+    def db_save(self) -> RETV_TMP:
         # Save changes to the database.
         retval = deepcopy(RETV_TMP)
         log.d("saving the database")
