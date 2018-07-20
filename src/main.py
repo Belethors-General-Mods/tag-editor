@@ -27,7 +27,7 @@ def main() -> None:
         pass
     else:
         db = tag.DB()
-        db_hist = [db]
+        db_hist = []
         
         ftag = tag.FTAG(config, db, db_hist)
         ftag.db_load()
@@ -78,10 +78,9 @@ def main() -> None:
             pass
         
         rv = ftag.get_modified_state()
-        log.i(rv)
         if rv["success"]:
             if rv["retval"]:
-                log.i("savin'")
+                log.i("- this would be a saving message here -")
                 # ftag.db_save()
         
         pass

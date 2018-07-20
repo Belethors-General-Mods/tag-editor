@@ -60,6 +60,7 @@ class FTAG(object):
         log.d("loading the database")
         try:
             self.database = tag.load_tagdb(self.path)
+            self.db_history.append(self.database)  # TODO: fix
             retval["success"] = True  # It's that easy. ¯\_(ツ)_/¯
         except Exception as exc:
             retval["msg"] = "An error occurred while loading the database!\n" + f"└> {color.BOLD}{exc}{color.UNBOLD}"
@@ -168,16 +169,16 @@ class FTAG(object):
         retval = deepcopy(RETV_TMP)
         retval = self.db_check()
         if retval["success"]:
-            if self.database == self.db_history[len(self.db_history)]:  # TODO: test this, it might break stuff
-                retval["msg"] = "Not changed"
+            if self.database == self.db_history[len(self.db_history) - 1]:  # TODO: test this, it might break stuff
+                retval["msg"] = "Database is not changed"
                 retval["success"] = True
                 retval["retval"] = False
-                log.e(retval["msg"])
+                log.i(retval["msg"])
             else:
-                retval["msg"] = "Changed"
+                retval["msg"] = "Database is changed"
                 retval["success"] = True
                 retval["retval"] = True
-                log.e(retval["msg"])
+                log.i(retval["msg"])
         return retval
 
     def get_list(self) -> RETV_TMP:
