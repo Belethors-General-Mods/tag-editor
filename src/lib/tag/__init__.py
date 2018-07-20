@@ -60,7 +60,7 @@ class FTAG(object):
         log.d("loading the database")
         try:
             self.database = tag.load_tagdb(self.path)
-            self.db_history.append(self.database)  # TODO: fix
+            self.db_history.append(deepcopy(self.database))  # TODO: fix
             retval["success"] = True  # It's that easy. ¯\_(ツ)_/¯
         except Exception as exc:
             retval["msg"] = "An error occurred while loading the database!\n" + f"└> {color.BOLD}{exc}{color.UNBOLD}"
@@ -167,12 +167,8 @@ class FTAG(object):
         # See if the last two states of the database are the same. (Aka. DID YOU FUCKING SAVE??)
         retval = deepcopy(RETV_TMP)
         retval = self.db_check()
-        match = True
         if retval["success"]:
-            for k in self.database:
-                if self.database[k] != self.db_history[len(self.db_history) - 1][k]:
-                    match = False
-            if match:
+            if self.database == self.db_history[len(self.db_history) - 1]:
                 retval["msg"] = "Database is not changed"
                 retval["success"] = True
                 retval["retval"] = False
@@ -288,6 +284,7 @@ class FTAG(object):
                 retval["success"] = False
                 log.e(retval["msg"])
                 return retval
+            # TODO: handling of nexus stuff
             self.database[tag_name][attr_name] = val
             retval["msg"] = str(self.database[tag_name])
         return retval

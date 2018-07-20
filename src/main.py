@@ -80,7 +80,7 @@ def main() -> None:
         rv = ftag.get_modified_state()
         if rv["success"]:
             if rv["retval"]:
-                log.i("saving message here")
+                log.i("!!save msg!!")
                 # ftag.db_save()
         
         pass
