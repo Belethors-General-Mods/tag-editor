@@ -75,6 +75,7 @@ class FTAG(object):
         if retval["success"]:
             # Sort by key:
             retval["retval"] = sorted(self.database.items(), key=lambda kv: kv[0])
+        log.i(retval["retval"])
         return retval
 
     def db_save(self) -> RETV_TMP:

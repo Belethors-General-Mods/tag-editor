@@ -20,16 +20,6 @@ def main() -> None:
     
     args = arg.parse()
     
-    # get_tag(self, tag_name: str) -> RETV_TMP:
-    # get_list(self) -> RETV_TMP:
-    # tag_construct(self, beth: str, gems: str, ncategory: str, ntag: str, steam: str, name: str) -> RETV_TMP:
-    # tag_add(self, tlist: Optional[list]) -> RETV_TMP:
-    # tag_delete(self, tlist: Optional[list]) -> RETV_TMP:
-    # tag_edit(self, tag_name: str, beth: str, gems: str, ncategory: str, ntag: str, steam: str, name: str) -> RETV_TMP:
-    
-    # print args for debug purposes
-    # print(args)
-    
     # frontend loading is optional.
     if args.frontend == "repl":
         repl = REPL(config)
@@ -84,10 +74,16 @@ def main() -> None:
             else:
                 log.e("Something went wrong!")
         else:
+            log.e("Please invoke -h for help and usage.")
             pass
         
-        # saving is on-hold until the bugs are sorted out
-        # ftag.db_save()
+        rv = ftag.get_modified_state()
+        log.i(rv)
+        if rv["success"]:
+            if rv["retval"]:
+                log.i("savin'")
+                # ftag.db_save()
+        
         pass
 
 
