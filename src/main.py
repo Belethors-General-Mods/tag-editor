@@ -57,9 +57,8 @@ def main() -> None:
                 ftag.tag_add([rv["retval"]])
             else:
                 print("that won't work lol")
-            pass
         elif args.edit:
-            pass
+            print(args.edit)
         elif args.delete:
             pass
         else:
