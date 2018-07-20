@@ -50,23 +50,39 @@ def main() -> None:
         elif args.list:
             rv = ftag.get_list()
             log.i(rv["retval"])
+            if rv["success"]:
+                log.i("Done")
+            else:
+                log.e("Something went wrong!")
         elif args.add:
             if len(args.add) is 6:
                 rv = ftag.tag_construct(args.add[0], args.add[1], args.add[2], args.add[3], args.add[4], args.add[5])
                 print(rv["retval"])
-                ftag.tag_add([rv["retval"]])
+                rv = ftag.tag_add([rv["retval"]])
+                if rv["success"]:
+                    log.i("Done")
+                else:
+                    log.e("Something went wrong!")
             else:
-                log.e("that won't work lol")
+                log.e("how in the bloody hell did you do that")
         elif args.edit:
             if len(args.edit) >= 3:
                 tag_name = args.edit[0]
                 attr_name = args.edit[1]
                 val = args.edit[2:]
                 rv = ftag.tag_edit(tag_name, attr_name, val)
+                if rv["success"]:
+                    log.i("Done")
+                else:
+                    log.e("Something went wrong!")
             else:
                 log.e("Invalid arguments, please look at -h for more info")
         elif args.delete:
-            pass
+            rv = ftag.tag_delete(args.delete)
+            if rv["success"]:
+                log.i("Done")
+            else:
+                log.e("Something went wrong!")
         else:
             pass
         
