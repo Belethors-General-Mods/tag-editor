@@ -196,8 +196,8 @@ class FTAG(object):
         retval["retval"] = 0
         if retval["success"]:
             for id in self.mapping.values():
-                if retval["retval"] < id:
-                    retval["retval"] = id
+                if retval["retval"] < int(id):
+                    retval["retval"] = int(id)
             retval["retval"] += 1
         return retval
 
@@ -229,19 +229,20 @@ class FTAG(object):
         if retval["success"]:  # Ok
             cid = retval["retval"]  # getting first current ID
             for ntag in tlist:
-                if len(ntag) != 6:  # are you stupid?
+                print("ntag most: " + str(len(ntag)))
+                if len(ntag) != 5:  # are you stupid?
                     retval["msg"] = "Invalid format for new tag."
                     retval["success"] = False
                     log.e(retval["msg"])
                     return retval  # guess you are
                 
                 new_tag = deepcopy(TAG_TEMPLATE)  # sofar so good
-                new_tag["beth"] = ntag[0]
-                new_tag["gems"] = ntag[1]
-                new_tag["nexus"]["category"] = ntag[2]
-                new_tag["nexus"]["tag"] = ntag[3]
-                new_tag["steam"] = ntag[4]
-                new_tag["name"] = ntag[5]
+                new_tag["beth"] = ntag["beth"]
+                new_tag["gems"] = ntag["gems"]
+                new_tag["nexus"]["category"] = ntag["nexus"]["category"]
+                new_tag["nexus"]["tag"] = ntag["nexus"]["tag"]
+                new_tag["steam"] = ntag["steam"]
+                new_tag["name"] = ntag["name"]
                 
                 self.database[new_tag["name"]] = new_tag  # let's hope these work this way
                 self.mapping[new_tag["name"]] = cid

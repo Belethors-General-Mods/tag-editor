@@ -45,7 +45,6 @@ def main() -> None:
         
         if args.get_tag:
             for tag_name in args.get_tag:
-                print(tag_name)
                 rv = ftag.get_tag(tag_name)
                 print(rv["msg"])
         elif args.list:
@@ -54,7 +53,8 @@ def main() -> None:
         elif args.add:
             if len(args.add) is 6:
                 rv = ftag.tag_construct(args.add[0], args.add[1], args.add[2], args.add[3], args.add[4], args.add[5])
-                print(rv["msg"])
+                print(rv["retval"])
+                ftag.tag_add([rv["retval"]])
             else:
                 print("that won't work lol")
             pass
