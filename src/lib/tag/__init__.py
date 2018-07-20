@@ -74,8 +74,9 @@ class FTAG(object):
         log.d("sorting the database")
         retval = self.db_check()
         if retval["success"]:
-            # Sort by key:
-            retval["retval"] = list(sorted(self.database.items(), key=lambda kv: kv[0]))
+            retval["retval"] = []
+            for id in sorted(self.mapping.items(), key=lambda kv: kv[0]):
+                retval["retval"].append({str(id[1]): self.database[id[1]]})
         return retval
 
     def db_save(self) -> RETV_TMP:
@@ -83,11 +84,11 @@ class FTAG(object):
         retval = deepcopy(RETV_TMP)
         log.d("saving the database")
         retval = self.db_sort()
-        sorted_by_key = retval["retval"]
+        sorted_by_name = retval["retval"]
         if retval["success"]:
             try:
-                tag.save_tagdb(self.path, sorted_by_key)
-                self.db_history.append(self.database)  # TODO fix
+                tag.save_tagdb(self.path, sorted_by_name)
+                self.db_history.append(deepcopy(self.database))  # TODO fix
                 self.db_update_mapping()
             except Exception as exc:
                 retval["msg"] = "An error occurred while saving the database!\n" + f"└> {color.BOLD}{exc}{color.UNBOLD}"
@@ -115,7 +116,7 @@ class FTAG(object):
         # Update the database.
         retval = deepcopy(RETV_TMP)
         try:
-            self.db_history.append(self.database)  # TODO fix
+            self.db_history.append(deepcopy(self.database))  # TODO fix
             retval = self.db_load()
             retval = self.db_update_mapping()
         except Exception as exc:
@@ -237,15 +238,15 @@ class FTAG(object):
                     return retval  # guess you are
                 
                 new_tag = deepcopy(TAG_TEMPLATE)  # sofar so good
-                new_tag["beth"] = ntag["beth"]
-                new_tag["gems"] = ntag["gems"]
-                new_tag["nexus"]["category"] = ntag["nexus"]["category"]
-                new_tag["nexus"]["tag"] = ntag["nexus"]["tag"]
-                new_tag["steam"] = ntag["steam"]
+                new_tag["beth"] = [ntag["beth"]]
+                new_tag["gems"] = [ntag["gems"]]
+                new_tag["nexus"]["category"] = [ntag["nexus"]["category"]]
+                new_tag["nexus"]["tag"] = [ntag["nexus"]["tag"]]
+                new_tag["steam"] = [ntag["steam"]]
                 new_tag["name"] = ntag["name"]
                 
-                self.database[new_tag["name"]] = new_tag  # let's hope these work this way
-                self.mapping[new_tag["name"]] = cid
+                self.database[cid] = new_tag  # let's hope these work this way
+                self.mapping[new_tag["name"]] = int(cid)
                 cid += 1  # increase current ID tracker
         return retval
 

@@ -26,6 +26,8 @@ def main() -> None:
         repl.cmdloop()
         pass
     else:
+        # CLI mess starts here
+        
         db = tag.DB()
         db_hist = []
         
@@ -47,7 +49,7 @@ def main() -> None:
         elif args.add:
             if len(args.add) is 6:
                 rv = ftag.tag_construct(args.add[0], args.add[1], args.add[2], args.add[3], args.add[4], args.add[5])
-                print(rv["retval"])
+                log.i(rv["retval"])
                 rv = ftag.tag_add([rv["retval"]])
                 if rv["success"]:
                     log.i("Done")
@@ -80,10 +82,9 @@ def main() -> None:
         rv = ftag.get_modified_state()
         if rv["success"]:
             if rv["retval"]:
-                log.i("!!save msg!!")
-                # ftag.db_save()
+                ftag.db_save()
         
-        pass
+        pass  # this is the end of the CLI mess
 
 
 if __name__ == '__main__':

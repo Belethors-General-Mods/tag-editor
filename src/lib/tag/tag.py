@@ -51,38 +51,42 @@ def load_tagdb(path: str) -> dict:
     return database
 
 
-def save_tagdb(path: str, tagdb: dict) -> None:
+def save_tagdb(path: str, tagdb: list) -> None:
     # Save the tag database to disk.
-    # TODO: test and merge database saving
-
+    
     atbs = ['beth', 'gems', 'nexus', 'steam']
     natbs = ['category', 'tag']
-
-    buffs = '<?xml version="1.0" encoding="UTF-8"?>\n\n'
-    buffs += '<taglist xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\n'
-
-    for i in tagdb:
-        buffs += f'\t<tag id="{i}" name="{tagdb[i]["name"]}">\n'
+    
+    wbuffer = '<?xml version="1.0" encoding="UTF-8"?>\n\n'
+    wbuffer += '<taglist xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\n'
+    
+    for entry in tagdb:
+        for key in entry:
+            id = key  # this is the fastest way to get the key, since there is only one key per entry.
+        
+        wbuffer += f'\t<tag id="{id}" name="{entry[id]["name"]}">\n'
         for atb in atbs:
             nempty = True
-            if tagdb[i][atb] and atb != 'nexus':
-                for si in tagdb[i][atb]:
-                    buffs += f'\t\t<{atb}>{si}</{atb}>\n'
-            elif tagdb[i][atb] and atb == 'nexus':
+            if entry[id][atb] and atb != 'nexus':
+                for si in entry[id][atb]:
+                    wbuffer += f'\t\t<{atb}>{si}</{atb}>\n'
+            elif entry[id][atb] and atb == 'nexus':
                 for natb in natbs:
-                    if tagdb[i][atb][natb]:
-                        for si in tagdb[i][atb][natb]:
-                            buffs += f'\t\t<{atb} type="{natb}">{si}</{atb}>\n'
+                    if entry[id][atb][natb]:
+                        for si in entry[id][atb][natb]:
+                            wbuffer += f'\t\t<{atb} type="{natb}">{si}</{atb}>\n'
                         nempty = False
                 if nempty:
-                    buffs += f'\t\t<{atb} xsi:nil=\"true\" />\n'
+                    wbuffer += f'\t\t<{atb} xsi:nil=\"true\" />\n'
             else:
-                buffs += f'\t\t<{atb} xsi:nil=\"true\" />\n'
-        buffs += '\t</tag>\n'
-    buffs += '</taglist>'
-
+                wbuffer += f'\t\t<{atb} xsi:nil=\"true\" />\n'
+        wbuffer += '\t</tag>\n'
+    wbuffer += '</taglist>'
+    
+    print(wbuffer)
+    
     with open(path, 'w') as opf:
-        opf.write(buffs)
+        opf.write(wbuffer)
 
 
 def get_id_map(database: dict) -> dict:
