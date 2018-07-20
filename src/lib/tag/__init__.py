@@ -145,16 +145,18 @@ class FTAG(object):
         retval = deepcopy(RETV_TMP)
         retval = self.db_check()
         if retval["success"]:
+            id = tag_name
             if tag_name not in self.database:
                 if tag_name in self.mapping:
                     tag_name = self.mapping[tag_name]
+                    id = tag_name
                 if tag_name not in self.database:
                     retval["msg"] = f"No such tag \"{tag_name}\""
                     retval["success"] = False
                     log.e(retval["msg"])
                     return retval
             # we are okay ᕙ( ͠°‿ °)ᕗ
-            retval["msg"] = str(self.database[tag_name])
+            retval["msg"] = ("ID: " + str(id) + "\t" + str(self.database[tag_name]))
             retval["success"] = True
             retval["retval"] = self.database[tag_name]
             # HASHTAG YOLO

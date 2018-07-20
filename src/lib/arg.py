@@ -6,7 +6,7 @@ import argparse
 def parse():
     parser = argparse.ArgumentParser(description="Use the BGM management tool from the command line, Huzzah!")
 
-    parser.add_argument("-f", "--frontend", action="store_true",
+    parser.add_argument("-f", "--frontend", default=None, choices=["repl"],
         help="flag for using the frontend")
 
     parser.add_argument("-g", "--get-tag", nargs="+", default=None,
@@ -15,7 +15,7 @@ def parse():
     parser.add_argument("-l", "--list", action="store_true",
         help="lists all tags")
 
-    parser.add_argument("-a", "--add", nargs=1, default=None,
+    parser.add_argument("-a", "--add", nargs=6, default=None,
         help="creates and adds a tag to the database")
 
     parser.add_argument("-d", "--delete", nargs="+", default=None,

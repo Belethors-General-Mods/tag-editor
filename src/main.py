@@ -31,7 +31,7 @@ def main() -> None:
     # print(args)
     
     # frontend loading is optional.
-    if args.frontend:
+    if args.frontend == "repl":
         repl = REPL(config)
         repl.cmdloop()
         pass
@@ -41,15 +41,22 @@ def main() -> None:
         
         ftag = tag.FTAG(config, db, db_hist)
         ftag.db_load()
+        ftag.db_update_mapping()
         
-        if args.get_tag is not None:
+        if args.get_tag:
             for tag_name in args.get_tag:
+                print(tag_name)
                 rv = ftag.get_tag(tag_name)
-                print(rv["retval"])
+                print(rv["msg"])
         elif args.list:
             rv = ftag.get_list()
             print(rv["retval"])
         elif args.add:
+            if len(args.add) is 6:
+                rv = ftag.tag_construct(args.add[0], args.add[1], args.add[2], args.add[3], args.add[4], args.add[5])
+                print(rv["msg"])
+            else:
+                print("that won't work lol")
             pass
         elif args.edit:
             pass
