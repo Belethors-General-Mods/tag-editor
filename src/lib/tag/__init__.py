@@ -266,7 +266,7 @@ class FTAG(object):
                 self.database.pop(tag_name, None)
         return retval
 
-    def tag_edit(self, tag_name: str, beth: str, gems: str, ncategory: str, ntag: str, steam: str, name: str) -> RETV_TMP:
+    def tag_edit(self, tag_name: str, attr_name: str, val: list) -> RETV_TMP:
         # Edit a tag.
         retval = deepcopy(RETV_TMP)
         retval = self.db_check()
@@ -279,17 +279,11 @@ class FTAG(object):
                     retval["success"] = False
                     log.e(retval["msg"])
                     return retval
-            if beth is not None:
-                self.database[tag_name]["beth"] = beth
-            if gems is not None:
-                self.database[tag_name]["gems"] = gems
-            if ncategory is not None:
-                self.database[tag_name]["nexus"]["category"] = ncategory
-            if ntag is not None:
-                self.database[tag_name]["nexus"]["tag"] = ntag
-            if steam is not None:
-                self.database[tag_name]["steam"] = steam
-            if name is not None:
-                self.database[tag_name]["name"] = name
+            if attr_name not in self.database[tag_name].keys():
+                retval["msg"] = f"No such attribute \"{attr_name}\""
+                retval["success"] = False
+                log.e(retval["msg"])
+                return retval
+            self.database[tag_name][attr_name] = val
             retval["msg"] = str(self.database[tag_name])
         return retval

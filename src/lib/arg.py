@@ -21,7 +21,7 @@ def parse():
     parser.add_argument("-d", "--delete", nargs="+", default=None, metavar=("TAG_NAME"),
         help="deletes all the specified tags")
 
-    parser.add_argument("-e", "--edit", nargs=1, default=None, metavar=("TAG_NAME"),
-        help="edits a tag's properties")
+    parser.add_argument("-e", "--edit", nargs="+", default=None,  # metavar=("TAG_NAME", "ATTR_NAME", "VALUE"),
+        help="TAG_NAME ATTR_NAME VALUE(s)... edits a tag's properties")
 
     return parser.parse_args()
