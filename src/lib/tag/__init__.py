@@ -168,8 +168,12 @@ class FTAG(object):
         # See if the last two states of the database are the same. (Aka. DID YOU FUCKING SAVE??)
         retval = deepcopy(RETV_TMP)
         retval = self.db_check()
+        match = True
         if retval["success"]:
-            if self.database == self.db_history[len(self.db_history) - 1]:  # TODO: test this, it might break stuff
+            for k in self.database:
+                if self.database[k] != self.db_history[len(self.db_history) - 1]:
+                    match = False
+            if match:
                 retval["msg"] = "Database is not changed"
                 retval["success"] = True
                 retval["retval"] = False
