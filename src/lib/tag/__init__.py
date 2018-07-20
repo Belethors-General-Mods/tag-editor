@@ -229,7 +229,6 @@ class FTAG(object):
         if retval["success"]:  # Ok
             cid = retval["retval"]  # getting first current ID
             for ntag in tlist:
-                print("ntag most: " + str(len(ntag)))
                 if len(ntag) != 5:  # are you stupid?
                     retval["msg"] = "Invalid format for new tag."
                     retval["success"] = False
