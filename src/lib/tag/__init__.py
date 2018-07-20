@@ -75,8 +75,7 @@ class FTAG(object):
         retval = self.db_check()
         if retval["success"]:
             # Sort by key:
-            retval["retval"] = sorted(self.database.items(), key=lambda kv: kv[0])
-        log.i(retval["retval"])
+            retval["retval"] = list(sorted(self.database.items(), key=lambda kv: kv[0]))
         return retval
 
     def db_save(self) -> RETV_TMP:
@@ -171,7 +170,7 @@ class FTAG(object):
         match = True
         if retval["success"]:
             for k in self.database:
-                if self.database[k] != self.db_history[len(self.db_history) - 1]:
+                if self.database[k] != self.db_history[len(self.db_history) - 1][k]:
                     match = False
             if match:
                 retval["msg"] = "Database is not changed"
